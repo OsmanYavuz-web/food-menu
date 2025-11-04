@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Haftalık Menü</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Crimson+Text:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="css/select2.min.css" rel="stylesheet" />
+  <!-- <link href="css/css2.css" rel="stylesheet"> -->
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* Sabit Ürünler Modal Koyu Tema Stilleri */
+    .form-control.is-invalid {
+      border-color: var(--danger) !important;
+      background-color: rgba(230, 115, 115, 0.1) !important;
+    }
+    
+    .toast-container {
+      z-index: 1060 !important;
+    }
+    
+    /* Confirm modal'ı sabit ürünler modal'ının üstünde göster */
+    #confirmModal {
+      z-index: 1070 !important;
+    }
+    
+    #confirmModal .modal-backdrop {
+      z-index: 1065 !important;
+    }
+    
+    /* Bootstrap outline-danger düğmesi koyu tema için */
+    .btn-outline-danger {
+      color: var(--danger) !important;
+      border-color: var(--danger) !important;
+      background: transparent !important;
+    }
+    
+    .btn-outline-danger:hover {
+      background-color: var(--danger) !important;
+      border-color: var(--danger) !important;
+      color: #fff !important;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container-fluid">
+    <!-- Modern Header Başlangıcı -->
+    <div class="menu-header">
+      <div class="header-title d-flex align-items-center flex-grow-1">
+        <span class="fs-1 fw-bold">JSGA - Haftalık Menü</span>
+      </div>
+      <div class="header-select d-flex align-items-center justify-content-center flex-grow-1">
+        <span class="menu-select-label">Hafta Seç:</span>
+        <select id="weekly-menu-select" class="form-select menu-select"></select>
+        <button id="delete-weekly-menu-btn"
+          class="btn btn-outline-secondary ms-2 d-flex align-items-center justify-content-center" type="button"
+          title="Haftayı Sil" style="width: 40px; height: 40px; padding: 0; font-size: 1.3em;">&#10006;</button>
+      </div>
+      <div class="header-btn d-flex align-items-center justify-content-end flex-grow-1">
+        <button id="manage-sabit-urunler-btn" class="btn btn-outline-primary me-2" title="Sabit Ürünleri Yönet">
+          Sabit Ürün Yönetimi
+        </button>
+        <button id="add-weekly-menu-btn" class="btn menu-add-btn d-flex align-items-center gap-2">
+          <span>Yeni Haftalık Menü</span>
+        </button>
+      </div>
+    </div>
+    <!-- Modern Header Sonu -->
+    <div class="d-flex justify-content-center mb-0" id="days-buttons">
+      <!-- Gün butonları dinamik olarak eklenecek -->
+    </div>
+    
+    
+    
+    <div id="day-detail" class="mb-4">
+      <!-- Seçilen günün detayları burada gösterilecek -->
+    </div>
+
+     <!-- Footer -->
+     <footer class="footer">
+      <div class="container-fluid">
+          <div class="footer-content text-center">
+              <p>&copy; 2025 JSGA SELF VE ALAKART MENÜ SİSTEMİ. (Osman Yavuz - 0541 737 35 32)</p>
+          </div>
+      </div>
+  </footer>
+
+  </div>
+  <script src="js/jquery-3.7.0.min.js"></script>
+  <script src="js/bootstrap.bundle.min.js"></script>
+  <script src="js/exceljs.min.js"></script>
+  <script src="js/select2.min.js"></script>
+  <script src="js/pptxgen.bundle.js"></script>
+  <!-- Static Data -->
+  <script src="sabit-yemekbasliklari.js"></script>
+  <script src="sabit-menuler.js"></script>
+  <script src="sabit-urunler.js"></script>
+  <!-- Utility Scripts -->
+  <script src="js/utils/dateUtils.js"></script>
+  <script src="js/utils/priceUtils.js"></script>
+  <script src="js/utils/validationUtils.js"></script>
+  <!-- Main App Script -->
+  <script src="js/app.js"></script>
+  <!-- Haftalık Menü Ekleme Modalı -->
+  <div class="modal fade" id="weeklyMenuModal" tabindex="-1" aria-labelledby="weeklyMenuModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header border-0">
+          <h5 class="modal-title" id="weeklyMenuModalLabel">Yeni Haftalık Menü Ekle</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+        </div>
+        <div class="modal-body">
+          <form id="modal-weekly-menu-form">
+            <div class="mb-3">
+              <label class="form-label">Menü Başlığı</label>
+              <input type="text" class="form-control" name="title" required placeholder="Örn: 24-28 Haziran Menüsü">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Başlangıç Tarihi</label>
+              <input type="date" class="form-control" name="start" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Bitiş Tarihi</label>
+              <input type="date" class="form-control" name="end" required>
+            </div>
+            <button type="submit" class="btn btn-success w-100">Ekle</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Onay Modalı -->
+  <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header border-0">
+          <h5 class="modal-title" id="confirmModalLabel">Onay</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+        </div>
+        <div class="modal-body" id="confirmModalBody"></div>
+        <div class="modal-footer border-0">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Vazgeç</button>
+          <button type="button" class="btn btn-primary" id="confirmModalOk">Evet</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Menü Notları Düzenleme Modalı -->
+  <div class="modal fade" id="menuNotesModal" tabindex="-1" aria-labelledby="menuNotesModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered ">
+      <div class="modal-content">
+        <div class="modal-header border-0">
+          <h5 class="modal-title" id="menuNotesModalLabel">Menü Notları Düzenle</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+        </div>
+        <div class="modal-body">
+          <div class="alert alert-info mb-3 text-center">
+            Her menü tipi için özel notlar ekleyebilirsiniz. Bu notlar Excel dosyalarında menünün altında görünecektir.
+          </div>
+          <form id="menu-notes-form">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label class="form-label fw-bold">Self Menü Notu</label>
+                  <textarea class="form-control menu-note-input" name="self" rows="3" placeholder="Self menü için özel notlarınızı yazın..."></textarea>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label fw-bold">Alakart Menü Dikey Notu</label>
+                  <textarea class="form-control menu-note-input" name="alakartDikey" rows="3" placeholder="Alakart menü dikey için özel notlarınızı yazın..."></textarea>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label fw-bold">Alakart Menü Yatay Notu</label>
+                  <textarea class="form-control menu-note-input" name="alakartYatay" rows="3" placeholder="Alakart menü yatay için özel notlarınızı yazın..."></textarea>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label class="form-label fw-bold">Dekanlık Menü Notu</label>
+                  <textarea class="form-control menu-note-input" name="dekanlik" rows="3" placeholder="Dekanlık menüsü için özel notlarınızı yazın..."></textarea>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label fw-bold">Pide Menü Notu</label>
+                  <textarea class="form-control menu-note-input" name="pide" rows="3" placeholder="Pide menüsü için özel notlarınızı yazın..."></textarea>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer border-0">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Vazgeç</button>
+          <button type="button" class="btn btn-primary" id="save-menu-notes-btn">Kaydet</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <!-- Sabit Ürünler Yönetimi Modal -->
+  <div class="modal fade" id="sabitUrunlerModal" tabindex="-1" aria-labelledby="sabitUrunlerModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title fw-bold" id="sabitUrunlerModalLabel" style="color: var(--primary);">
+            Sabit Ürünler Yönetimi
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body p-4">
+          <div class="mb-4">
+            <div class="alert alert-info">
+              Bu bölümde sabit ürünleri yönetebilirsiniz. Değişiklikler tüm menülerde otomatik olarak uygulanacaktır.
+            </div>
+          </div>
+          
+          <!-- Kategori Tabları -->
+          <ul class="nav nav-pills mb-4" id="sabitUrunlerTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button class="nav-link active" id="zeytinyaglilar-tab" data-bs-toggle="tab" data-bs-target="#zeytinyaglilar" type="button" role="tab">Zeytinyağlılar</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="soguklar-tab" data-bs-toggle="tab" data-bs-target="#soguklar" type="button" role="tab">Soğuklar</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="ekmekler-tab" data-bs-toggle="tab" data-bs-target="#ekmekler" type="button" role="tab">Ekmekler</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="icecekler-tab" data-bs-toggle="tab" data-bs-target="#icecekler" type="button" role="tab">İçecekler</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="izgaralar-tab" data-bs-toggle="tab" data-bs-target="#izgaralar" type="button" role="tab">Izgaralar</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="pideler-tab" data-bs-toggle="tab" data-bs-target="#pideler" type="button" role="tab">Pideler</button>
+            </li>
+          </ul>
+          
+          <div class="tab-content" id="sabitUrunlerTabContent">
+            <!-- Tab içerikleri dinamik olarak doldurulacak -->
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-danger me-auto" id="reset-sabit-urunler-btn">
+            Varsayılan Değerlere Dön
+          </button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+          <button type="button" class="btn btn-primary" id="save-sabit-urunler-btn">
+            Kaydet
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+</body>
+
+</html>
