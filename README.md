@@ -1,4 +1,4 @@
-# 🍽️ Jandarma ve Sahil Güvenlik Akademisi - Haftalık Menü Yönetim Sistemi
+# 🍽️ Haftalık Menü Yönetim Sistemi
 
 **Jandarma ve Sahil Güvenlik Akademisi Sosyal Tesisler Müdürlüğü**  
 **Lokanta Kısım Amirliği**
