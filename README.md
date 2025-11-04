@@ -1,7 +1,7 @@
 # 🍽️ Haftalık Menü Yönetim Sistemi
 
 **Jandarma ve Sahil Güvenlik Akademisi Sosyal Tesisler Müdürlüğü**  
-**Lokanta Kısım Amirliği**
+**Lokanta Kısım Amirliği - Haftalık Menü Yönetim Sistemi**
 
 ![Uygulama Ekran Görüntüsü](ss1.jpeg)
 ![Uygulama Ekran Görüntüsü](ss2.jpeg)
